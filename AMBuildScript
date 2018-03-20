@@ -139,7 +139,7 @@ class SMConfig(object):
         self.mysql_root = builder.options.mysql_path
       else:
         for i in range(7):
-          self.mysql_root = ResolveEnvPath('MYSQL5', 'mysql-5.' + str(i))
+          self.mysql_root = ResolveEnvPath('MYSQL55', 'mysql-5.' + str(i))
           if self.mysql_root:
             break
       if not self.mysql_root or not os.path.isdir(self.mysql_root):

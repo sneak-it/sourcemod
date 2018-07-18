@@ -635,6 +635,51 @@ static cell_t GetTrieSnapshotKey(IPluginContext *pContext, const cell_t *params)
 	return written;
 }
 
+static cell_t CloneTrie(IPluginContext *pContext, const cell_t *params)
+{
+	HandleError err;
+	HandleSecurity sec = HandleSecurity(pContext->GetIdentity(), g_pCoreIdent);
+
+	CellTrie *pOldTrie;
+	if ((err = handlesys->ReadHandle(params[1], htCellTrie, &sec, (void **)&pOldTrie))
+		!= HandleError_None)
+	{
+		return pContext->ThrowNativeError("Invalid Handle %x (error %d)", params[1], err);
+	}
+
+	CellTrie *pNewTrie = new CellTrie;
+	for (auto it = pOldTrie->map.iter(); !it.empty(); it.next())
+	{
+		const char *key = it->key.chars();
+
+		auto result = pOldTrie->map.find(key);
+		auto insert = pNewTrie->map.findForAdd(key);
+		if (pNewTrie->map.add(insert, key))
+		{
+			if (result->value.isCell())
+			{
+				insert->value.setCell(result->value.cell());
+			}
+			else if (result->value.isString())
+			{
+				insert->value.setString(result->value.chars());
+			}
+			else if (result->value.isArray())
+			{
+				insert->value.setArray(result->value.array(), result->value.arrayLength());
+			}
+		}
+	}
+
+	Handle_t hndl = handlesys->CreateHandle(htCellTrie, pNewTrie, pContext->GetIdentity(), g_pCoreIdent, NULL);
+	if (!hndl)
+	{
+		delete pNewTrie;
+	}
+
+	return hndl;
+}
+
 REGISTER_NATIVES(trieNatives)
 {
 	{"ClearTrie",				ClearTrie},
@@ -665,6 +710,7 @@ REGISTER_NATIVES(trieNatives)
 	{"StringMap.SetValue",		SetTrieValue},
 	{"StringMap.Size.get",		GetTrieSize},
 	{"StringMap.Snapshot",		CreateTrieSnapshot},
+	{"StringMap.Clone",			CloneTrie},
 
 	{"StringMapSnapshot.Length.get",	TrieSnapshotLength},
 	{"StringMapSnapshot.KeyBufferSize", TrieSnapshotKeyBufferSize},

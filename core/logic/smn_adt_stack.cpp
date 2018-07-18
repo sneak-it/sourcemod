@@ -409,7 +409,6 @@ static cell_t CloneStack(IPluginContext *pContext, const cell_t *params)
 	}
 
 	return hndl;
-
 }
 
 REGISTER_NATIVES(cellStackNatives)

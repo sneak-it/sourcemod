@@ -652,6 +652,7 @@ static cell_t CloneTrie(IPluginContext *pContext, const cell_t *params)
 	if (!hndl)
 	{
 		delete pNewTrie;
+		return hndl;
 	}
 
 	for (StringHashMap<Entry>::iterator it = pOldTrie->map.iter(); !it.empty(); it.next())

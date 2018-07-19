@@ -648,14 +648,20 @@ static cell_t CloneTrie(IPluginContext *pContext, const cell_t *params)
 	}
 
 	CellTrie *pNewTrie = new CellTrie;
-	for (auto it = pOldTrie->map.iter(); !it.empty(); it.next())
+	Handle_t hndl = handlesys->CreateHandle(htCellTrie, pNewTrie, pContext->GetIdentity(), g_pCoreIdent, NULL);
+	if (!hndl)
+	{
+		delete pNewTrie;
+	}
+
+	for (StringHashMap<Entry>::iterator it = pOldTrie->map.iter(); !it.empty(); it.next())
 	{
 		const char *key = it->key.chars();
 
-		auto result = pOldTrie->map.find(key);
-		auto insert = pNewTrie->map.findForAdd(key);
+		StringHashMap<Entry>::Insert insert = pNewTrie->map.findForAdd(key);
 		if (pNewTrie->map.add(insert, key))
 		{
+			StringHashMap<Entry>::Result result = pOldTrie->map.find(key);
 			if (result->value.isCell())
 			{
 				insert->value.setCell(result->value.cell());
@@ -668,13 +674,12 @@ static cell_t CloneTrie(IPluginContext *pContext, const cell_t *params)
 			{
 				insert->value.setArray(result->value.array(), result->value.arrayLength());
 			}
+			else
+			{
+				delete pNewTrie;
+				return pContext->ThrowNativeError("Unhandled data type encountered");
+			}
 		}
-	}
-
-	Handle_t hndl = handlesys->CreateHandle(htCellTrie, pNewTrie, pContext->GetIdentity(), g_pCoreIdent, NULL);
-	if (!hndl)
-	{
-		delete pNewTrie;
 	}
 
 	return hndl;

@@ -56,7 +56,7 @@ methodmap ArrayStack < Handle
 
 	// Clones an array stack, returning a new handle with the same size and data.
 	// This should NOT be confused with CloneHandle. This is a completely new
-	// handle with the same data but no relation to the original. It should
+	// handle with the same data but no relation to the original. It should be
 	// closed when no longer needed with delete or CloseHandle().
 	//
 	// @return              New handle to the cloned array object

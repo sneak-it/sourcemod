@@ -59,7 +59,7 @@ methodmap ArrayStack < Handle
 	// handle with the same data but no relation to the original. It should be
 	// closed when no longer needed with delete or CloseHandle().
 	//
-	// @return              New handle to the cloned array object
+	// @return              New handle to the cloned array stack
 	public native ArrayStack Clone();
 
 	// Pushes a value onto the end of the stack, adding a new index.

@@ -22,9 +22,9 @@ if SM.mysql_root:
   if builder.target.platform == 'linux':
     binary.compiler.postlink += ['-lrt']
   elif builder.target.platform == 'windows':
+    binary.compiler.defines += ['WIN32_LEAN_AND_MEAN']
     binary.compiler.postlink += [
-      os.path.join(SM.mysql_root, 'lib', 'opt', 'mysqlclient.lib'),
-      os.path.join(SM.mysql_root, 'lib', 'opt', 'zlib.lib'),
+      os.path.join(SM.mysql_root, 'lib', 'mysqlclient.lib'),
       'wsock32.lib'
     ]
 
@@ -40,7 +40,7 @@ if SM.mysql_root:
   
   if binary.compiler.family == 'msvc' and binary.compiler.version >= 1900:
     binary.sources += [ 'msvc15hack.c' ]
-    binary.compiler.linkflags += ['legacy_stdio_definitions.lib', 'legacy_stdio_wide_specifiers.lib']
+    binary.compiler.linkflags += ['legacy_stdio_definitions.lib', 'legacy_stdio_wide_specifiers.lib', '/FORCE']
 
   SM.extensions += [builder.Add(binary)]
 

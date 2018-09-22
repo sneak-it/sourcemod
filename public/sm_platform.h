@@ -50,8 +50,12 @@
 #if !defined stat
 #define stat _stat
 #endif
+#if !defined strcasecmp
 #define strcasecmp strcmpi
+#endif
+#if !defined strncasecmp
 #define strncasecmp strnicmp
+#endif
 #include <windows.h>
 #include <direct.h>
 #define PLATFORM_LIB_EXT		"dll"
@@ -94,6 +98,5 @@
 #if !defined SM_ARRAYSIZE
 #define SM_ARRAYSIZE(x) ((sizeof(x)/sizeof(0[x])) / ((size_t)(!(sizeof(x) % sizeof(0[x])))))
 #endif
-
 #endif //_INCLUDE_SOURCEMOD_PLATFORM_H_
 
